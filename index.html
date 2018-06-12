@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
+    <meta name="description" content="A cryptocurrency that has just one single coin in circulation.">
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
 
-    <title>Product example for Bootstrap</title>
+    <title>OneSingleCoin</title>
 
     <!-- Bootstrap core CSS -->
     <link href="dist/css/bootstrap.min.css" rel="stylesheet">
@@ -74,7 +74,7 @@
         <div class="my-3 py-3">
           <h2 class="display-5">How to buy?</h2>
           <p class="lead">If <a href="https://metamask.io/">Metamask</a> is installed in your browser, these buttons should work:</p>
-          <a class="btn btn-outline-secondary" href="#">Buy OneSingleCoin</a>
+          <a class="btn btn-outline-secondary but-btn" href="#">Buy OneSingleCoin</a>
           <a class="btn btn-outline-secondary" href="#">Withdraw</a>
 
           <div class="mt-4">You can also interact with <a href="https://etherscan.io/address/0x4b8479e42e1f1a6bf1e600fb750e270f62987905">the coin contract</a> directly from Mist, Parity and other ethereum clients.<br/><a href="https://etherscan.io/address/0x4b8479e42e1f1a6bf1e600fb750e270f62987905" target="_blank">The contract code</a> is verified on etherscan.</div>
@@ -121,11 +121,12 @@
       });
     </script>
 
-    <script src="http://rawgit.com/ethereum/web3.js/0.16.0/dist/web3.min.js"></script>
+    <script src="https://rawgit.com/ethereum/web3.js/0.16.0/dist/web3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethjs@0.3.0/dist/ethjs.min.js"></script>
     <script>
-        window.addEventListener('load', function() {
+        $(document).ready(function() {
             // Check if Web3 has been injected by the browser:
+            console.log(web3);
             if (typeof web3 !== 'undefined') {
                 // You have a web3 browser! Continue below!
                 startApp(web3);
@@ -135,8 +136,9 @@
                 // Warn the user that they need to get a web3 browser
                 // Or install MetaMask, maybe with a nice graphic.
             }
-        })
-        const abi = [{
+        });
+
+        var abi = [{
             "constant": false,
             "inputs": [
             ],
@@ -150,20 +152,18 @@
             "payable": true,
             "type": "function"
         }]
-        const contract_address = '0xf035755df96ad968a7ad52c968dbe86d52927f5b'
-        const etherValue = web3.toWei(10, 'ether');
-        var address = '0x91612055A68aD74A6e756615941Ac59e9220A940'
+        var contract_address = '0xf035755df96ad968a7ad52c968dbe86d52927f5b';
+        var address = '0x91612055A68aD74A6e756615941Ac59e9220A940';
+
+
         function startApp(web3) {
-            //alert("entro");
-            const eth = new Eth(web3.currentProvider)
-            const token = eth.contract(abi).at(contract_address);
+            var eth = new Eth(web3.currentProvider)
+            var token = eth.contract(abi).at(contract_address);
             listenForClicks(token,web3)
-            //alert("llego");
         }
         function listenForClicks (miniToken, web3) {
-            var button = document.querySelector('button.transferFunds')
             web3.eth.getAccounts(function(err, accounts) { console.log(accounts); address = accounts.toString(); })
-            button.addEventListener('click', function() {
+            $('.but-btn').on('click', function() {
                 miniToken.buy( { from: address, value: '1000000000000000000' })
                     .then(function (txHash) {
                         console.log('Transaction sent')
