@@ -22,7 +22,6 @@
       <div class="col-md-5 p-lg-5 mx-auto my-5">
         <h1 class="display-4 font-weight-normal">OneSingleCoin</h1>
         <p class="lead font-weight-normal">A cryptocurrency that has just one single coin in circulation.</p>
-        <!--<a class="btn btn-outline-secondary" href="#">Become the owner</a>-->
       </div>
     </div>
 
@@ -31,7 +30,7 @@
         <div class="my-3 py-3">
           <div class="row text-center">
             <div class="col-4">
-              <h1>0.12 ETH</h1>
+              <h1 class="price-cont"></h1>
               <div>Current Price</div>
               <div>&asymp; 160$</div>
             </div>
@@ -42,7 +41,7 @@
             </div>
 
             <div class="col-4">
-              <h1>0.12 ETH</h1>
+              <h1 class="price-cont"></h1>
               Market Cap = Price &times; Supply
               <div>&asymp; 160$</div>
             </div>
@@ -70,40 +69,42 @@
     </div>
 
     <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden buy-section d-none">
         <div class="my-3 py-3">
-          <h2 class="display-5">How to buy?</h2>
-          <p class="lead">If <a href="https://metamask.io/">Metamask</a> is installed in your browser, these buttons should work:</p>
-          <a class="btn btn-outline-secondary but-btn" href="#">Buy OneSingleCoin</a>
-          <a class="btn btn-outline-secondary" href="#">Withdraw</a>
-
-          <div class="mt-4">You can also interact with <a href="https://etherscan.io/address/0x4b8479e42e1f1a6bf1e600fb750e270f62987905">the coin contract</a> directly from Mist, Parity and other ethereum clients.<br/><a href="https://etherscan.io/address/0x4b8479e42e1f1a6bf1e600fb750e270f62987905" target="_blank">The contract code</a> is verified on etherscan.</div>
+          <h2 class="display-5">Buy the OneSingleCoin</h2>
+          <div class="row">
+            <div class="col-6 offset-3">
+              <textarea type="text" placeholder="Write a message you would like to immortalize in blockchain" class="form-control mt-4" autofocus id="message"></textarea>
+              The message could be an ad, a <a href="https://www.reddit.com/r/cryptocurrencymemes/" target="_blank">meme</a> or anything else. However we won't publish any offensive things.
+              <div>
+                <a class="btn btn-outline-primary buy-btn btn-lg mt-4 mb-5" href="#">Buy OneSingleCoin</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden howtobuy-section">
+        <div class="my-3 py-3">
+          <h2 class="display-5">How to buy?</h2>
+          <p class="lead install-metamask-warning">Install <a href="https://metamask.io/">Metamask</a> and add enough funds to your account to buy the coin.</p>
+        </div>
+      </div>
+    </div>
+
+    <!--<div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
       <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
         <div class="my-3 py-3">
-          <h2 class="display-5">The message from the 22th Hodler of OneSinglecoin (should be placed in twitter):</h2>
+          <h2 class="display-5">The message from the 22th Hodler of OneSingleCoin:</h2>
 
           <p class="lead">And an even wittier subheading.</p>
         </div>
       </div>
     </div>
+    -->
 
-    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-        <div class="my-3 py-3">
-          <h2 class="display-5">What message should i write?</h2>
-          <p class="lead">
-            It's totally up to you. Any message you write will be immortalized in blockchain.
-            <br/>It could be an ad, a <a href="https://www.reddit.com/r/cryptocurrencymemes/" target="_blank">meme</a> or anything else. However we won't publish any abusive/offensive messages here.
-            <br/>Choose it wisely. After all, all you will purchase is this message.
-          </p>
-        </div>
-      </div>
-    </div>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -121,70 +122,231 @@
       });
     </script>
 
-    <script src="https://rawgit.com/ethereum/web3.js/0.16.0/dist/web3.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ethjs@0.3.0/dist/ethjs.min.js"></script>
+    <script src="assets/js/vendor/web3.min.js"></script>
     <script>
+        var abi = [
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "message",
+                        "type": "string"
+                    }
+                ],
+                "name": "buy",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "payable": true,
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "name": "_buyerId",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "name": "_buyer",
+                        "type": "address"
+                    }
+                ],
+                "name": "Purchased",
+                "type": "event"
+            },
+            {
+                "inputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "constant": false,
+                "inputs": [],
+                "name": "withdraw",
+                "outputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "balance",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "currentHodler",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "currentHodlerId",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "messages",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "previousHodlers",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "price",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+        var contract_address = '0x5987c741e7e94b35a93abcefcce95e51e8d3d723';
+        var web3 = null;
+        var contract;
+
         $(document).ready(function() {
-            // Check if Web3 has been injected by the browser:
-            console.log(web3);
-            if (typeof web3 !== 'undefined') {
-                // You have a web3 browser! Continue below!
+            web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
+            if (web3) {
                 startApp(web3);
                 //alert("Web3");
             } else {
-                //alert("No hay web3");
-                // Warn the user that they need to get a web3 browser
-                // Or install MetaMask, maybe with a nice graphic.
+                //in "how to buy" section
+                alert('You should install metamask. If you already have it, please login');
             }
         });
 
-        var abi = [{
-            "constant": false,
-            "inputs": [
-            ],
-            "name": "buy",
-            "outputs": [
-                {
-                    "name": "success",
-                    "type": "bool"
-                }
-            ],
-            "payable": true,
-            "type": "function"
-        }]
-        var contract_address = '0xf035755df96ad968a7ad52c968dbe86d52927f5b';
-        var address = '0x91612055A68aD74A6e756615941Ac59e9220A940';
+        function toggleMetamaskAlert(toggle) {
+            $('.buy-section').toggleClass('d-none', !toggle);
+            $('.howtobuy-section').toggleClass('d-none', toggle);
+        }
 
+        function updateView() {
+              contract.methods.price().call(function(error, res) {
+                  if (!error) {
+                      $('.price-cont').html(Math.floor(res / Math.pow(10, 14)) / 10000);
+                  }
+              });
+
+              contract.methods.currentHodlerId().call(function(error, currentHodlerId) {
+                  console.log('current hodler id', currentHodlerId, error);
+                  if (error) {
+                      return;
+                  }
+                  //todo: put messages into the view from lastHodler to currentHodlerId. Do not put if there's some content in it. (optionally - Need to update lastHodler at the end not to update every time but this needs to be done only if all the placeholders are filled - check in the beginning); actually i need to call only for unfilled
+                  contract.methods.messages(currentHodlerId).call(function (error, res) {
+                      console.log('message', error, res);
+                  });
+              });
+        }
 
         function startApp(web3) {
-            var eth = new Eth(web3.currentProvider)
-            var token = eth.contract(abi).at(contract_address);
-            listenForClicks(token,web3)
-        }
-        function listenForClicks (miniToken, web3) {
-            web3.eth.getAccounts(function(err, accounts) { console.log(accounts); address = accounts.toString(); })
-            $('.but-btn').on('click', function() {
-                miniToken.buy( { from: address, value: '1000000000000000000' })
-                    .then(function (txHash) {
-                        console.log('Transaction sent')
-                        console.dir(txHash)
-                        waitForTxToBeMined(txHash)
-                    })
-                    .catch(console.error)
+            toggleMetamaskAlert(false);
+            contract = new web3.eth.Contract(abi, contract_address);
+
+            updateView();
+            setInterval(updateView  , 10000);
+
+            //todo: withdrawal button (only if the user has some non-zero balance)
+            $('.buy-btn').on('click', function(e) {
+                e.preventDefault();
+                web3.eth.getAccounts(function(err, accounts) {
+                    var address = accounts[0];
+                    if (!address) {
+                        return toggleMetamaskAlert(true);
+                    }
+
+                    contract.methods.price().call(function(error, res) {
+                        if (error) {
+                            //do something
+                        }
+                        //todo: put a loader: transaction is sending to the network
+                        contract.methods.buy($('#message').val()).send({ from: address, value: res })
+                            .then(function (txHash) {
+                                console.log('Transaction sent', txHash)
+                                //todo: put a loader "transaction is getting mined; once its mined, you will be the owner of OneSingleCoin" (specify the txCash with a link to network
+                            })
+                            .catch(console.error)
+                    });
+                });
             })
         }
-        async function waitForTxToBeMined (txHash) {
-            var txReceipt
-            while (!txReceipt) {
-                try {
-                    txReceipt = await eth.getTransactionReceipt(txHash)
-                } catch (err) {
-                    return indicateFailure(err)
-                }
-            }
-            indicateSuccess()
-        }
+
     </script>
-    <button class="transferFunds">Send Money!</button>
   </body>
 </html>
