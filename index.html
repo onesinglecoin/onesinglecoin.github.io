@@ -112,7 +112,10 @@
       <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden howtobuy-section">
         <div class="my-3 py-3">
           <h2 class="display-5">How to buy?</h2>
-          <p class="lead install-metamask-warning">Install <a href="https://metamask.io/">Metamask</a> and add enough funds to your account to buy the coin. If you have installed Metamask, ensure you're logged in.</p>
+          <p class="lead install-metamask-warning">
+            Install <a href="https://metamask.io/">Metamask</a> and add enough funds to your account to buy the coin.
+            <br/>If you have Metamask installed, ensure you're logged into it.
+          </p>
         </div>
       </div>
     </div>
@@ -315,7 +318,7 @@
                 "type": "function"
             }
         ];
-        var contract_address = '0x5987c741e7e94b35a93abcefcce95e51e8d3d723';
+        var contract_address = '0x6103281b7d1f7862d692fda42dc06ece61a40547';
         var web3 = null;
         var contract;
         var lastHodlerId = -1;
@@ -323,10 +326,24 @@
         $(document).ready(function() {
             web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
             if (web3) {
-                startApp(web3);
-                //alert("Web3");
+                checkMetamaskLogin(0);
             }
         });
+
+        function checkMetamaskLogin(timeout) {
+            setTimeout(function () {
+                web3.eth.getAccounts(function(err, accounts) {
+                    console.log(accounts);
+                    var address = accounts[0];
+                    if (address) {
+                        startApp(web3);
+                    }
+                    else {
+                        checkMetamaskLogin(300);
+                    }
+                });
+            }, timeout)
+        }
 
         function toggleMetamaskAlert(toggle) {
             $('.buy-section').toggleClass('d-none', toggle);
@@ -377,6 +394,7 @@
         }
 
         function startApp(web3) {
+            console.log('toggle alert false');
             toggleMetamaskAlert(false);
             contract = new web3.eth.Contract(abi, contract_address);
 
@@ -403,7 +421,9 @@
                 e.preventDefault();
                 web3.eth.getAccounts(function(err, accounts) {
                     var address = accounts[0];
+                    console.log('address', address);
                     if (!address) {
+                        console.log('toggle alert true');
                         return toggleMetamaskAlert(true);
                     }
 
