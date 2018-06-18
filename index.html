@@ -75,9 +75,17 @@
           <div class="row">
             <div class="col-6 offset-3">
               <textarea type="text" placeholder="Write a message you would like to immortalize in blockchain" class="form-control mt-4" autofocus id="message"></textarea>
-              The message could be an ad, a <a href="https://www.reddit.com/r/cryptocurrencymemes/" target="_blank">meme</a> or anything else. However we won't publish any offensive things.
+              The message could be an ad, <a href="https://www.reddit.com/r/cryptocurrencymemes/" target="_blank">a meme</a> or anything else. However we won't publish any offensive things.
               <div>
                 <a class="btn btn-outline-primary buy-btn btn-lg mt-4 mb-5" href="#">Buy OneSingleCoin</a>
+              </div>
+
+              <div class="alert alert-warning d-none" id="transaction-sending-alert">
+                Confirm the transaction in MetaMask to complete the purchase. Once you submit, please wait a bit until the transaction is sent.
+              </div>
+
+              <div class="alert alert-info d-none" id="transaction-sent-alert">
+                The transaction has been sent to the network. Once its mined, you will be the owner of OneSingleCoin. You can check the status of transaction on etherscan: <span class="link-placeholder"></span></a>
               </div>
             </div>
           </div>
@@ -89,21 +97,37 @@
       <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden howtobuy-section">
         <div class="my-3 py-3">
           <h2 class="display-5">How to buy?</h2>
-          <p class="lead install-metamask-warning">Install <a href="https://metamask.io/">Metamask</a> and add enough funds to your account to buy the coin.</p>
+          <p class="lead install-metamask-warning">Install <a href="https://metamask.io/">Metamask</a> and add enough funds to your account to buy the coin. If you have installed Metamask, ensure you're logged in.</p>
         </div>
       </div>
     </div>
 
-    <!--<div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3 d-none" id="message3">
+      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden d-none message-cont">
         <div class="my-3 py-3">
-          <h2 class="display-5">The message from the 22th Hodler of OneSingleCoin:</h2>
-
-          <p class="lead">And an even wittier subheading.</p>
+          <h5 class="display-5">The message from the 3d Hodler of OneSingleCoin:</h5>
+          <p class="lead"></p>
         </div>
       </div>
     </div>
-    -->
+
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3 d-none" id="message2">
+      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden d-none message-cont">
+        <div class="my-3 py-3">
+          <h5 class="display-5">The message from the 2d Hodler of OneSingleCoin:</h5>
+          <p class="lead"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3 d-none" id="message1">
+      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden d-none message-cont">
+        <div class="my-3 py-3">
+          <h5 class="display-5">The message from the 1st Hodler of OneSingleCoin:</h5>
+          <p class="lead"></p>
+        </div>
+      </div>
+    </div>
 
 
     <!-- Bootstrap core JavaScript
@@ -279,21 +303,30 @@
         var contract_address = '0x5987c741e7e94b35a93abcefcce95e51e8d3d723';
         var web3 = null;
         var contract;
+        var lastHodlerId = -1;
 
         $(document).ready(function() {
             web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
             if (web3) {
                 startApp(web3);
                 //alert("Web3");
-            } else {
-                //in "how to buy" section
-                alert('You should install metamask. If you already have it, please login');
             }
         });
 
         function toggleMetamaskAlert(toggle) {
-            $('.buy-section').toggleClass('d-none', !toggle);
-            $('.howtobuy-section').toggleClass('d-none', toggle);
+            $('.buy-section').toggleClass('d-none', toggle);
+            $('.howtobuy-section').toggleClass('d-none', !toggle);
+        }
+
+        function updateMessage(i) {
+            contract.methods.messages(i).call(function (error, res) {
+                console.log('msg', i, res);
+                var number = i + 1;
+                if (!error) {
+                    $('#message' + number).find('.lead').html(res);
+                    $('#message' + number).find('.message-cont').removeClass('d-none');
+                }
+            });
         }
 
         function updateView() {
@@ -304,14 +337,15 @@
               });
 
               contract.methods.currentHodlerId().call(function(error, currentHodlerId) {
+                  //todo: need to update lastHodler at the end only if all the placeholders are filled
+
                   console.log('current hodler id', currentHodlerId, error);
                   if (error) {
                       return;
                   }
-                  //todo: put messages into the view from lastHodler to currentHodlerId. Do not put if there's some content in it. (optionally - Need to update lastHodler at the end not to update every time but this needs to be done only if all the placeholders are filled - check in the beginning); actually i need to call only for unfilled
-                  contract.methods.messages(currentHodlerId).call(function (error, res) {
-                      console.log('message', error, res);
-                  });
+                  for (var i = lastHodlerId + 1; i < currentHodlerId; i++) {
+                      updateMessage(i);
+                  }
               });
         }
 
@@ -333,13 +367,15 @@
 
                     contract.methods.price().call(function(error, res) {
                         if (error) {
-                            //do something
+                            return;
                         }
-                        //todo: put a loader: transaction is sending to the network
+                        $('#transaction-sending-alert').removeClass('d-none');
                         contract.methods.buy($('#message').val()).send({ from: address, value: res })
                             .then(function (txHash) {
-                                console.log('Transaction sent', txHash)
-                                //todo: put a loader "transaction is getting mined; once its mined, you will be the owner of OneSingleCoin" (specify the txCash with a link to network
+                                console.log(txHash);
+                                $('#transaction-sending-alert').addClass('d-none');
+                                $('#transaction-sent-alert').removeClass('d-none')
+                                    .find('.link-placeholder').html('<a href="https://etherscan.io/tx/' + txHash.transactionHash + '">' + txHash.transactionHash + '</a>');
                             })
                             .catch(console.error)
                     });
