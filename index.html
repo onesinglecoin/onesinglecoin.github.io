@@ -94,6 +94,21 @@
     </div>
 
     <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden balance-section d-none">
+        <div class="my-3 py-3">
+          <h2 class="display-5">Withdrawal</h2>
+          <p class="lead">You current balance: <span class="balance-amount"></span></p>
+          <div>
+            <a class="btn btn-outline-primary withdraw-btn btn-lg mt-4 mb-5" href="#">Withdraw</a>
+            <div class="alert alert-info d-none" id="withdrawal-done-alert">
+              The transaction has been sent to the network. You can check the status of transaction on etherscan: <span class="link-placeholder"></span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
       <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden howtobuy-section">
         <div class="my-3 py-3">
           <h2 class="display-5">How to buy?</h2>
@@ -330,6 +345,18 @@
         }
 
         function updateView() {
+              web3.eth.getAccounts(function(err, accounts) {
+                  var address = accounts[0];
+                  if (!address) return;
+
+                  contract.methods.balance(address).call(function(error, res) {
+                      if (!error && parseInt(res)) {
+                          console.log('balance', res);
+                          $('.balance-section').removeClass('d-none').find('.balance-amount').text(res / Math.pow(10, 18));
+                      }
+                  });
+              });
+
               contract.methods.price().call(function(error, res) {
                   if (!error) {
                       $('.price-cont').html(Math.floor(res / Math.pow(10, 14)) / 10000);
@@ -355,6 +382,21 @@
 
             updateView();
             setInterval(updateView  , 10000);
+
+            $('.withdraw-btn').on('click', function(e) {
+                console.log('withdraw');
+                e.preventDefault();
+                web3.eth.getAccounts(function(err, accounts) {
+                    var address = accounts[0];
+                    if (address) {
+                        contract.methods.withdraw().send({ from: address })
+                            .then(function (txHash) {
+                                $('#withdrawal-done-alert').removeClass('d-none')
+                                    .find('.link-placeholder').html('<a href="https://etherscan.io/tx/' + txHash.transactionHash + '">' + txHash.transactionHash + '</a>');
+                            });
+                    }
+                });
+            });
 
             //todo: withdrawal button (only if the user has some non-zero balance)
             $('.buy-btn').on('click', function(e) {
