@@ -120,7 +120,7 @@
       </div>
     </div>
 
-    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3 d-none" id="message3">
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3 d-none" id="message2">
       <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden d-none message-cont">
         <div class="my-3 py-3">
           <h5 class="display-5">The message from the 3d Hodler of OneSingleCoin:</h5>
@@ -129,20 +129,22 @@
       </div>
     </div>
 
-    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3 d-none" id="message2">
-      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden d-none message-cont">
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3" id="message1">
+      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden message-cont">
         <div class="my-3 py-3">
           <h5 class="display-5">The message from the 2d Hodler of OneSingleCoin:</h5>
-          <p class="lead"></p>
+          <p class="lead">
+            <img src="https://i.imgflip.com/2c5u7i.jpg" />
+          </p>
         </div>
       </div>
     </div>
 
-    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3 d-none" id="message1">
-      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden d-none message-cont">
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3" id="message0">
+      <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden message-cont">
         <div class="my-3 py-3">
           <h5 class="display-5">The message from the 1st Hodler of OneSingleCoin:</h5>
-          <p class="lead"></p>
+          <p class="lead">One coin to rule them all</p>
         </div>
       </div>
     </div>
@@ -351,12 +353,15 @@
         }
 
         function updateMessage(i) {
+            console.log('message', $('#message' + i).find('.lead').html());
+
+            if ($('#message' + i).find('.lead').html().trim()) {
+                return;
+            }
             contract.methods.messages(i).call(function (error, res) {
-                console.log('msg', i, res);
-                var number = i + 1;
                 if (!error) {
-                    $('#message' + number).find('.lead').html(res);
-                    $('#message' + number).find('.message-cont').removeClass('d-none');
+                    $('#message' + i).find('.lead').html(res);
+                    $('#message' + i).find('.message-cont').removeClass('d-none');
                 }
             });
         }
