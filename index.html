@@ -368,9 +368,9 @@
 
                   contract.methods.balance(address).call(function(error, res) {
                       if (!error && parseInt(res)) {
-                          console.log('balance', res);
-                          $('.balance-section').removeClass('d-none').find('.balance-amount').text(res / Math.pow(10, 18));
+                          $('.balance-section').removeClass('d-none');
                       }
+                      $('.balance-section').find('.balance-amount').text(res / Math.pow(10, 18));
                   });
               });
 
