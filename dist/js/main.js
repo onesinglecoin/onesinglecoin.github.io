@@ -212,7 +212,7 @@ function updateView() {
 
     contract.methods.price().call(function(error, res) {
         if (!error) {
-            var price = Math.floor(res / Math.pow(10, 14)) / 10000;
+            var price = Math.floor(res / Math.pow(10, 15)) / 1000;
             $('.price-cont').html(price);
             $('.usd-cont').html('&asymp; $' + Math.floor(price * 522));
         }
