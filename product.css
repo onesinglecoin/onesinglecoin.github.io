@@ -83,6 +83,9 @@
   img {
     max-width: 600px !important;
   }
+  img {
+    max-width: 600px !important;
+  }
 }
 
 @media (min-width: 768px) {
