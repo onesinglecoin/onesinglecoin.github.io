@@ -110,3 +110,7 @@
 }
 
 .overflow-hidden { overflow: hidden; }
+
+.message-cont {
+  border: 1px solid lightgray;
+}
