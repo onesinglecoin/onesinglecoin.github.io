@@ -203,18 +203,16 @@ function updateView() {
         if (!address) return;
 
         contract.methods.balance(address).call(function(error, res) {
-            if (!error && parseInt(res)) {
-                $('.balance-section').removeClass('d-none');
-            }
+            $('.balance-section').removeClass('d-none');
             $('.balance-section').find('.balance-amount').text(res / Math.pow(10, 18));
         });
     });
 
     contract.methods.price().call(function(error, res) {
         if (!error) {
-            var price = Math.floor(res / Math.pow(10, 15)) / 1000;
+            var price = Math.round(res / Math.pow(10, 16)) / 100;
             $('.price-cont').html(price + ' ETH');
-            $('.usd-cont').html('&asymp; $' + Math.floor(price * 522));
+            $('.usd-cont').html('&asymp; $' + Math.floor(price * 543));
         }
     });
 
