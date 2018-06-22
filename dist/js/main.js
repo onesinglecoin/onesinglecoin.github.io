@@ -212,7 +212,7 @@ function updateView() {
         if (!error) {
             var price = Math.round(res / Math.pow(10, 16)) / 100;
             $('.price-cont').html(price + ' ETH');
-            $('.usd-cont').html('&asymp; $' + Math.floor(price * 530));
+            $('.usd-cont').html('&asymp; $' + Math.floor(price * 514));
         }
     });
 
