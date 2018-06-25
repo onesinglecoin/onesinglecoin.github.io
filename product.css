@@ -114,3 +114,7 @@
 .message-cont {
   border: 1px solid lightgray;
 }
+
+.current-owner {
+  border: 4px solid #007bff;
+}

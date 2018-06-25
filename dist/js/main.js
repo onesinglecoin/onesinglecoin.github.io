@@ -187,7 +187,7 @@ function updateMessage(i) {
     if (!$msg.length || $msg.find('.lead').html().trim()) {
         return;
     }
-    console.log('up message' + i);
+
     contract.methods.messages(i).call(function (error, res) {
         console.log('msg', i, res);
         if (!error) {
@@ -225,6 +225,7 @@ function updateView() {
         }
         for (var i = lastHodlerId + 1; i <= currentHodlerId; i++) {
             updateMessage(i);
+            $('#message' + i).find('.message-cont').toggleClass('current-owner', currentHodlerId == i);
         }
     });
 }
