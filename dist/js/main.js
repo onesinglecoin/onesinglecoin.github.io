@@ -210,7 +210,7 @@ function updateView() {
 
     contract.methods.price().call(function(error, res) {
         if (!error) {
-            var price = Math.round(res / Math.pow(10, 16)) / 100;
+            var price = Math.round(res / Math.pow(10, 17)) / 10;
             $('.price-cont').html(price + ' ETH');
             $('.usd-cont').html('&asymp; $' + Math.floor(price * 514));
         }
